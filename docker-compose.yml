@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      - "2525:2525"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      SMTP_PORT: 2525
+      DATABASE_URL: file:./data/production.db
+      EMAIL_DOMAIN: temp.local
+      BASE_URL: http://localhost:3000
+      DEFAULT_TTL_MINUTES: 15
+      MAX_TTL_MINUTES: 60
+      MIN_TTL_MINUTES: 1
+      CORS_ORIGIN: "http://localhost:3000,http://localhost"
+      LOG_LEVEL: info
+    volumes:
+      - app_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  app_data:
+    driver: local

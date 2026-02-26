@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model EmailAddress {
+  id        String   @id @default(cuid())
+  address   String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  emails    Email[]
+
+  @@index([expiresAt])
+  @@index([address])
+}
+
+model Email {
+  id                     String       @id @default(cuid())
+  emailAddressId         String
+  emailAddress           EmailAddress @relation(fields: [emailAddressId], references: [id], onDelete: Cascade)
+  from                   String
+  to                     String
+  subject                String
+  textBody               String?
+  htmlBody               String?
+  attachmentsMetadata    String?      // Stores JSON array of {filename, mimetype, size}
+  receivedAt             DateTime     @default(now())
+  headers                String?      // Store full email headers for debugging as JSON string
+
+  @@index([emailAddressId])
+  @@index([receivedAt])
+}
