@@ -236,11 +236,11 @@ QUIT
 
 ```bash
 # Using swaks
-swaks --to abc123def456@temp.local \
-      --from sender@example.com \
+swaks --from test@example.com \
       --server localhost:2525 \
-      --subject "Test" \
-      --body "Test email"
+      --header "Subject: HTML Test" \
+      --body "This is a test email"
+      --to abc123def@temp.local
 ```
 
 ## Frontend Usage
